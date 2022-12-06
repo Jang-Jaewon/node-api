@@ -1,26 +1,21 @@
-const http = require('node:http');
+const express = require('express')
+var morgan = require('morgan')
 
-const hostname = '127.0.0.1';
-const port = 3000;
+const app = express()
+const port = 3000
 
-const server = http.createServer((req, res) => {
-    console.log(req.url) // 요청 경로를 확인 가능
+function logger(req, res, next){ // logger 미들웨어 간단 구현
+    console.log(`i am logger. your request url is "${req.url}"`);
+    next(); // 미들웨어에서는 next 함수 반드시 호출해야함
+}
 
-    if (req.url === '/') {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/plain');
-        res.end('Hello, World!\n');
-    } else if (req.url === '/users') {
-        res.statusCode = 404;
-        res.setHeader('Content-Type', 'text/plain');
-        res.end('User List');
-    } else {
-        res.statusCode = 404;
-        res.end('Not Found');
-    }
-    
-});
+app.use(logger); // 미들웨어를 추가할 때는 use를 사용
+app.use(morgan('dev')) // 서드파티 로거 미들웨어 사용
 
-server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
-});
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+})
+
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+})

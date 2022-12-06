@@ -1,17 +1,26 @@
-const fs = require("fs");
+const http = require('node:http');
 
-// 노드는 이벤트 기반의 비동기 I/O 프레임워크이다!
-// readFileSync vs resdFile 비교
+const hostname = '127.0.0.1';
+const port = 3000;
 
-// 비동기
-// const readFileData = fs.readFile('./data.txt', 'utf-8', function(err, readFileData){
-//     console.log('readFile =>', readFileData)
-// });
-const readFileData = fs.readFile('./data.txt', 'utf-8', function(err, data){
-    console.log('readFile =>', data)
+const server = http.createServer((req, res) => {
+    console.log(req.url) // 요청 경로를 확인 가능
+
+    if (req.url === '/') {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/plain');
+        res.end('Hello, World!\n');
+    } else if (req.url === '/users') {
+        res.statusCode = 404;
+        res.setHeader('Content-Type', 'text/plain');
+        res.end('User List');
+    } else {
+        res.statusCode = 404;
+        res.end('Not Found');
+    }
+    
 });
 
-
-// 동기
-const readFileSyncdata = fs.readFileSync('./data.txt', 'utf-8');
-console.log('readFileSync =>', readFileSyncdata)
+server.listen(port, hostname, () => {
+    console.log(`Server running at http://${hostname}:${port}/`);
+});

@@ -16,9 +16,17 @@ app.get('/', (req, res) => {
 })
 
 app.get('/users', (req, res) => {
-    res.json(users)
+    req.query.limit = req.query.limit || 10; 
+    const limit = parseInt(req.query.limit);
+    if (Number.isNaN(limit)) {
+        return res.status(400).end();
+    }
+    res.json(users.slice(0, limit));
   })
 
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 })
+
+
+module.exports = app;

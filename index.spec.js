@@ -62,3 +62,23 @@ describe('GET /users/1은', ()=> {
         });
     })
 })
+
+
+describe('GET /users/1은', ()=> {
+    describe('성공일 경우', ()=> {
+        it('204를 응답한다.', (done)=> {
+            request(app)
+                .delete('/users/1')
+                .expect(204)
+                .end(done);
+        })
+    })
+    describe('실패일 경우', ()=> {
+        it('id가 숫자가 아닐 경우 400으로 응답한다.', (done)=> {
+            request(app)
+                .delete('/users/two')
+                .expect(400)
+                .end(done);
+        })
+    })
+})

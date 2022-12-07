@@ -1,5 +1,7 @@
 const express = require('express')
 const morgan = require('morgan')
+const bodyParser = require('body-parser')
+const { send } = require('process')
 const app = express()
 const port = 3000
 const responseData = {
@@ -12,6 +14,8 @@ const responseData = {
 }
 
 app.use(morgan('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
@@ -26,6 +30,25 @@ app.get('/users', (req, res) => {
     res.json(responseData.users.slice(0, limit));
   })
 
+app.post('/users', (req, res)=> {
+    let id;
+    const name = req.body.name;
+    const age = req.body.age;
+    if (!name || !age) return res.status(400).end();
+    
+    const isConflict = responseData.users.filter(user=> user.name == name).length;
+    if (isConflict) return res.status(409).end();
+    
+    const ids = responseData.users.map(user => user.id) //[1,2,3,4]
+    if (ids.length === 0) {
+        id = 1
+    }else{
+        id = Math.max(...ids) + 1;
+    }
+    const user = {id, name, age};
+    responseData.users.push(user);
+    res.status(201).json(user)
+})  
 
 app.get('/users/:id', (req, res)=> {
     const id = parseInt(req.params.id, 10)

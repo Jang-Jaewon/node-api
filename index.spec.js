@@ -64,7 +64,7 @@ describe('GET /users/1은', ()=> {
 })
 
 
-describe('GET /users/1은', ()=> {
+describe('DELETE /users/1은', ()=> {
     describe('성공일 경우', ()=> {
         it('204를 응답한다.', (done)=> {
             request(app)
@@ -78,6 +78,64 @@ describe('GET /users/1은', ()=> {
             request(app)
                 .delete('/users/two')
                 .expect(400)
+                .end(done);
+        })
+    })
+})
+
+
+describe('POST /users', ()=> {
+    describe('성공일 경우', ()=> {
+        let name = 'Choi',
+            age = 17,
+            body;
+        before(done=>{
+            request(app)
+                .post('/users')
+                .send({name, age})
+                .expect(201)
+                .end((err, res)=> {
+                    body = res.body;
+                    done();
+                });
+        })
+        it('생성된 사용자 객체를 반환한다.', ()=> {
+            body.should.have.property('id');
+        });
+        it('입력한 name과 age를 반환한다.', ()=> {
+            body.should.have.property('name', name);
+            body.should.have.property('age', age);
+        });
+    })
+    describe('실패일 경우', ()=> {
+        let name = 'Choi',
+            age = 17
+        it('name 파라미터 누락 시 400을 반환한다.', (done)=> {
+            request(app)
+                .post('/users')
+                .send({age})
+                .expect(400)
+                .end(done);
+        })
+        it('age 파라미터 누락 시 400을 반환한다.', (done)=> {
+            request(app)
+                .post('/users')
+                .send({name})
+                .expect(400)
+                .end(done);
+        })
+        it('name, age 파라미터 누락 시 400을 반환한다.', (done)=> {
+            request(app)
+                .post('/users')
+                .send({})
+                .expect(400)
+                .end(done);
+        })
+        it('name 중복일 경우 409를 반환한다.', (done)=> {
+            request(app)
+                .post('/users')
+                .send({'name': 'Jang', age})
+                .expect(409)
                 .end(done);
         })
     })

@@ -58,6 +58,26 @@ app.get('/users/:id', (req, res)=> {
     res.json(user)
 })
 
+app.put('/users/:id', (req, res)=> {
+    const id = parseInt(req.params.id, 10)
+    if (Number.isNaN(id)) return res.status(400).end();
+
+    const name = req.body.name;
+    const age = req.body.age;
+    if (!name) return res.status(400).end();
+    
+    const isConflict = responseData.users.filter(user=> user.name == name).length;
+    if (isConflict) return res.status(409).end();
+    
+    const user = responseData.users.filter(user=> user.id === id)[0]
+    if (!user) return res.status(404).end();
+
+    user.name = name
+    user.age = age
+    res.json(user)
+})
+
+
 app.delete('/users/:id', (req, res)=> {
     const id = parseInt(req.params.id, 10)
     if (Number.isNaN(id)) return res.status(400).end();

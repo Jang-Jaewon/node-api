@@ -33,7 +33,7 @@ describe('GET /users는', ()=> {
 })
 
 
-describe('GET /users/1은', ()=> {
+describe('GET /users/:id 는', ()=> {
     describe('성공일 경우', ()=> {
         it('id가 1인 사용자 객체를 반환한다.', (done)=> {
             request(app)
@@ -64,7 +64,7 @@ describe('GET /users/1은', ()=> {
 })
 
 
-describe('DELETE /users/1은', ()=> {
+describe('DELETE /users/:id 는', ()=> {
     describe('성공일 경우', ()=> {
         it('204를 응답한다.', (done)=> {
             request(app)
@@ -138,5 +138,52 @@ describe('POST /users', ()=> {
                 .expect(409)
                 .end(done);
         })
+    })
+})
+
+
+describe('PUT /users/:id 는', ()=> {
+    describe('성공일 경우', ()=> {
+        it('변경된 name과 age를 응답한다', (done)=> {
+            const name = 'Bang';
+            const age = 29;
+            request(app)
+                .put('/users/3')
+                .send({name, age})
+                .end((err, res)=> {
+                    res.body.should.have.property('name', name);
+                    res.body.should.have.property('age', age);
+                    done();
+                })
+        })
+    })
+    describe('실패일 경우', ()=> {
+        it('정수가 아닌 경우 400을 응답한다', (done)=> {
+            request(app)
+                .put('/users/one')
+                .expect(400)
+                .end(done);
+        });
+        it('name이 없을 경우 400을 응답한다.', (done)=> {
+            request(app)
+                .put('/users/3')
+                .send({})
+                .expect(400)
+                .end(done);
+        });
+        it('없는 사용자인 경우 404를 응답한다.', (done)=> {
+            request(app)
+                .put('/users/999')
+                .send({name: 'Yoon', age: 10})
+                .expect(404)
+                .end(done);
+        });
+        it('이름이 중복일 경우 409를 응답한다.', (done)=> {
+            request(app)
+                .put('/users/3')
+                .send({name: 'Kim', age: 10})
+                .expect(409)
+                .end(done);
+        });
     })
 })

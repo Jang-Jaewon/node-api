@@ -34,58 +34,7 @@ describe('GET /users는', ()=> {
 })
 
 
-describe('GET /users/:id 는', ()=> {
-    describe('성공일 경우', ()=> {
-        it('id가 1인 사용자 객체를 반환한다.', (done)=> {
-            request(app)
-                .get('/users/1')
-                .end((err, res)=> {
-                    res.body.should.be.instanceOf(Object);
-                    res.body.should.have.property('id', 1);
-                    res.body.should.have.property('name', 'Park');
-                    res.body.should.have.property('age', 13);
-                    done();
-            })
-        })
-    })
-    describe('실패일 경우', ()=> {
-        it('id가 숫자가 아닐 경우 400으로 응답한다.', (done)=> {
-            request(app)
-                .get('/users/three')
-                .expect(400)
-                .end(done)
-        });
-        it('id를 찾을 수 없는 경우 404로 응답한다.', (done)=> {
-            request(app)
-                .get('/users/9999')
-                .expect(404)
-                .end(done)
-        });
-    })
-})
-
-
-describe('DELETE /users/:id 는', ()=> {
-    describe('성공일 경우', ()=> {
-        it('204를 응답한다.', (done)=> {
-            request(app)
-                .delete('/users/1')
-                .expect(204)
-                .end(done);
-        })
-    })
-    describe('실패일 경우', ()=> {
-        it('id가 숫자가 아닐 경우 400으로 응답한다.', (done)=> {
-            request(app)
-                .delete('/users/two')
-                .expect(400)
-                .end(done);
-        })
-    })
-})
-
-
-describe('POST /users', ()=> {
+describe('POST /users 는', ()=> {
     describe('성공일 경우', ()=> {
         let name = 'Choi',
             age = 17,
@@ -137,6 +86,57 @@ describe('POST /users', ()=> {
                 .post('/users')
                 .send({'name': 'Jang', age})
                 .expect(409)
+                .end(done);
+        })
+    })
+})
+
+
+describe('GET /users/:id 는', ()=> {
+    describe('성공일 경우', ()=> {
+        it('id가 1인 사용자 객체를 반환한다.', (done)=> {
+            request(app)
+                .get('/users/1')
+                .end((err, res)=> {
+                    res.body.should.be.instanceOf(Object);
+                    res.body.should.have.property('id', 1);
+                    res.body.should.have.property('name', 'Park');
+                    res.body.should.have.property('age', 13);
+                    done();
+            })
+        })
+    })
+    describe('실패일 경우', ()=> {
+        it('id가 숫자가 아닐 경우 400으로 응답한다.', (done)=> {
+            request(app)
+                .get('/users/three')
+                .expect(400)
+                .end(done)
+        });
+        it('id를 찾을 수 없는 경우 404로 응답한다.', (done)=> {
+            request(app)
+                .get('/users/9999')
+                .expect(404)
+                .end(done)
+        });
+    })
+})
+
+
+describe('DELETE /users/:id 는', ()=> {
+    describe('성공일 경우', ()=> {
+        it('204를 응답한다.', (done)=> {
+            request(app)
+                .delete('/users/1')
+                .expect(204)
+                .end(done);
+        })
+    })
+    describe('실패일 경우', ()=> {
+        it('id가 숫자가 아닐 경우 400으로 응답한다.', (done)=> {
+            request(app)
+                .delete('/users/two')
+                .expect(400)
                 .end(done);
         })
     })

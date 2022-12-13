@@ -1,12 +1,13 @@
 // api
-const responseData = {
-    users:[
-        {id: 1, name: 'Park', age: 13},
-        {id: 2, name: 'Kim', age: 21},
-        {id: 3, name: 'Jang', age: 19},
-        {id: 4, name: 'Lee', age: 15},
-    ]
-};
+// const responseData = {
+//     users:[
+        // {id: 1, name: 'Park', age: 13},
+        // {id: 2, name: 'Kim', age: 21},
+        // {id: 3, name: 'Jang', age: 19},
+        // {id: 4, name: 'Lee', age: 15},
+//     ]
+// };
+const models = require('../../models');
 
 
 const index = function(req, res) {
@@ -15,7 +16,13 @@ const index = function(req, res) {
     if (Number.isNaN(limit)) {
         return res.status(400).end();
     }
-    res.json(responseData.users.slice(0, limit));
+    models.User
+        .findAll({
+            limit: limit
+        })
+        .then(users => {
+            res.json(users);
+        });
 };
 
 const show = function(req, res) {

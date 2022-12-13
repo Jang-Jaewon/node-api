@@ -2,10 +2,19 @@
 const request = require('supertest');
 const should = require('should');
 const app = require('../../index');
+const models = require('../../models');
 
 
 describe('GET /users는', ()=> {
     describe('성공 일 경우', ()=>{
+        const users = [
+            {id: 1, name: 'Park', age: 13},
+            {id: 2, name: 'Kim', age: 21},
+            {id: 3, name: 'Jang', age: 19},
+            {id: 4, name: 'Lee', age: 15},
+        ];
+        before(()=> models.sequelize.sync({force: true}));
+        before(()=> models.User.bulkCreate(users));
         it('사용자 객체를 배열로 응답한다.', (done)=> {
             request(app)
                 .get('/users')

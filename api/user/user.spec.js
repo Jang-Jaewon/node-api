@@ -132,7 +132,7 @@ describe('GET /users/:id 는', ()=> {
 })
 
 
-describe('DELETE /users/:id 는', ()=> {
+describe.only('DELETE /users/:id 는', ()=> {
     describe('성공일 경우', ()=> {
         it('204를 응답한다.', (done)=> {
             request(app)

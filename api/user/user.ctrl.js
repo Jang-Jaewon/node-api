@@ -28,9 +28,13 @@ const index = function(req, res) {
 const show = function(req, res) {
     const id = parseInt(req.params.id, 10)
     if (Number.isNaN(id)) return res.status(400).end();
-    const user = responseData.users.filter((user)=> user.id == id)[0];
-    if (!user) return res.status(404).end();
-    res.json(user)
+
+    models.User.findOne({
+        where: {id}
+    }).then(user=> {
+        if (!user) return res.status(404).end();
+        res.json(user)
+    })
 };
 
 const create = function(req, res) {
@@ -75,8 +79,11 @@ const update = function(req, res) {
 const destroy = function(req, res) {
     const id = parseInt(req.params.id, 10)
     if (Number.isNaN(id)) return res.status(400).end();
-    responseData.users = responseData.users.filter((user)=> user.id !== id);
-    res.status(204).end();
+    models.User.destroy({
+        where: {id}
+    }).then(()=> {
+        res.status(204).end();
+    })
 };
 
 module.exports = {

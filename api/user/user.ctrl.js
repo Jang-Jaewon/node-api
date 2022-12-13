@@ -38,23 +38,20 @@ const show = function(req, res) {
 };
 
 const create = function(req, res) {
-    let id;
     const name = req.body.name;
     const age = req.body.age;
     if (!name || !age) return res.status(400).end();
-    
-    const isConflict = responseData.users.filter(user=> user.name == name).length;
-    if (isConflict) return res.status(409).end();
-    
-    const ids = responseData.users.map(user => user.id) //[1,2,3,4]
-    if (ids.length === 0) {
-        id = 1
-    }else{
-        id = Math.max(...ids) + 1;
-    }
-    const user = {id, name, age};
-    responseData.users.push(user);
-    res.status(201).json(user)
+
+    models.User.create({name, age})
+        .then(user => {
+            res.status(201).json(user);
+        })
+        .catch(err => {
+            if (err.name === 'SequelizeUniqueConstraintError') {
+                return res.status(409).end();
+            }
+            res.status(500).end();
+        })
 };
 
 const update = function(req, res) {
@@ -64,16 +61,23 @@ const update = function(req, res) {
     const name = req.body.name;
     const age = req.body.age;
     if (!name) return res.status(400).end();
-    
-    const isConflict = responseData.users.filter(user=> user.name == name).length;
-    if (isConflict) return res.status(409).end();
-    
-    const user = responseData.users.filter(user=> user.id === id)[0]
-    if (!user) return res.status(404).end();
 
-    user.name = name
-    user.age = age
-    res.json(user)
+    models.User.findOne({where:{id}})
+        .then(user => {
+            if (!user) return res.status(404).end();
+            user.name = name;
+            user.age = age;
+            user.save()
+                .then(_ => {
+                    res.json(user);
+                })
+                .catch(err => {
+                    if (err.name === 'SequelizeUniqueConstraintError') {
+                        return res.status(409).end();
+                    }
+                    res.status(500).end();
+                })
+        })
 };
 
 const destroy = function(req, res) {

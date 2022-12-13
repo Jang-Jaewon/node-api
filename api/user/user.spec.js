@@ -6,15 +6,16 @@ const models = require('../../models');
 
 
 describe('GET /users는', ()=> {
+    const users = [
+        {id: 1, name: 'Park', age: 13},
+        {id: 2, name: 'Kim', age: 21},
+        {id: 3, name: 'Jang', age: 19},
+        {id: 4, name: 'Lee', age: 15},
+    ];
+    before(()=> models.sequelize.sync({force: true}));
+    before(()=> models.User.bulkCreate(users));
+    
     describe('성공 일 경우', ()=>{
-        const users = [
-            {id: 1, name: 'Park', age: 13},
-            {id: 2, name: 'Kim', age: 21},
-            {id: 3, name: 'Jang', age: 19},
-            {id: 4, name: 'Lee', age: 15},
-        ];
-        before(()=> models.sequelize.sync({force: true}));
-        before(()=> models.User.bulkCreate(users));
         it('사용자 객체를 배열로 응답한다.', (done)=> {
             request(app)
                 .get('/users')
@@ -44,6 +45,15 @@ describe('GET /users는', ()=> {
 
 
 describe('POST /users 는', ()=> {
+    const users = [
+        {id: 1, name: 'Park', age: 13},
+        {id: 2, name: 'Kim', age: 21},
+        {id: 3, name: 'Jang', age: 19},
+        {id: 4, name: 'Lee', age: 15},
+    ];
+    before(()=> models.sequelize.sync({force: true}));
+    before(()=> models.User.bulkCreate(users));
+    
     describe('성공일 경우', ()=> {
         let name = 'Choi',
             age = 17,
@@ -102,6 +112,15 @@ describe('POST /users 는', ()=> {
 
 
 describe('GET /users/:id 는', ()=> {
+    const users = [
+        {id: 1, name: 'Park', age: 13},
+        {id: 2, name: 'Kim', age: 21},
+        {id: 3, name: 'Jang', age: 19},
+        {id: 4, name: 'Lee', age: 15},
+    ];
+    before(()=> models.sequelize.sync({force: true}));
+    before(()=> models.User.bulkCreate(users));
+
     describe('성공일 경우', ()=> {
         it('id가 1인 사용자 객체를 반환한다.', (done)=> {
             request(app)
@@ -132,27 +151,16 @@ describe('GET /users/:id 는', ()=> {
 })
 
 
-describe.only('DELETE /users/:id 는', ()=> {
-    describe('성공일 경우', ()=> {
-        it('204를 응답한다.', (done)=> {
-            request(app)
-                .delete('/users/1')
-                .expect(204)
-                .end(done);
-        })
-    })
-    describe('실패일 경우', ()=> {
-        it('id가 숫자가 아닐 경우 400으로 응답한다.', (done)=> {
-            request(app)
-                .delete('/users/two')
-                .expect(400)
-                .end(done);
-        })
-    })
-})
-
-
 describe('PUT /users/:id 는', ()=> {
+    const users = [
+        {id: 1, name: 'Park', age: 13},
+        {id: 2, name: 'Kim', age: 21},
+        {id: 3, name: 'Jang', age: 19},
+        {id: 4, name: 'Lee', age: 15},
+    ];
+    before(()=> models.sequelize.sync({force: true}));
+    before(()=> models.User.bulkCreate(users));
+
     describe('성공일 경우', ()=> {
         it('변경된 name과 age를 응답한다', (done)=> {
             const name = 'Bang';
@@ -195,5 +203,34 @@ describe('PUT /users/:id 는', ()=> {
                 .expect(409)
                 .end(done);
         });
+    })
+})
+
+
+describe('DELETE /users/:id 는', ()=> {
+    const users = [
+        {id: 1, name: 'Park', age: 13},
+        {id: 2, name: 'Kim', age: 21},
+        {id: 3, name: 'Jang', age: 19},
+        {id: 4, name: 'Lee', age: 15},
+    ];
+    before(()=> models.sequelize.sync({force: true}));
+    before(()=> models.User.bulkCreate(users));
+    
+    describe('성공일 경우', ()=> {
+        it('204를 응답한다.', (done)=> {
+            request(app)
+                .delete('/users/1')
+                .expect(204)
+                .end(done);
+        })
+    })
+    describe('실패일 경우', ()=> {
+        it('id가 숫자가 아닐 경우 400으로 응답한다.', (done)=> {
+            request(app)
+                .delete('/users/two')
+                .expect(400)
+                .end(done);
+        })
     })
 })

@@ -232,5 +232,5 @@ describe('DELETE /users/:id 는', ()=> {
                 .expect(400)
                 .end(done);
         })
-    })
+    })  
 })

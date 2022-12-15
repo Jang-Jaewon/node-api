@@ -2,32 +2,26 @@
 const models = require('../../models');
 
 
-const index = function(req, res) {
+const index = async function(req, res) {
     req.query.limit = req.query.limit || 10; 
     const limit = parseInt(req.query.limit);
     if (Number.isNaN(limit)) {
         return res.status(400).end();
     }
-    models.User
-        .findAll({
-            limit: limit
-        })
-        .then(users => {
-            res.json(users);
-        });
+    const users = await models.User.findAll({limit: limit})
+    res.json(users);
 };
 
-const show = function(req, res) {
+
+const show = async function(req, res) {
     const id = parseInt(req.params.id, 10)
     if (Number.isNaN(id)) return res.status(400).end();
 
-    models.User.findOne({
-        where: {id}
-    }).then(user=> {
-        if (!user) return res.status(404).end();
-        res.json(user)
-    })
+    const user = await models.User.findOne({where: {id}})
+    if (!user) return res.status(404).end();
+    res.json(user);
 };
+
 
 const create = function(req, res) {
     const name = req.body.name;
@@ -46,7 +40,8 @@ const create = function(req, res) {
         })
 };
 
-const update = function(req, res) {
+
+const update = async function(req, res) {
     const id = parseInt(req.params.id, 10)
     if (Number.isNaN(id)) return res.status(400).end();
 
@@ -54,33 +49,32 @@ const update = function(req, res) {
     const age = req.body.age;
     if (!name) return res.status(400).end();
 
-    models.User.findOne({where:{id}})
-        .then(user => {
-            if (!user) return res.status(404).end();
-            user.name = name;
-            user.age = age;
-            user.save()
-                .then(_ => {
-                    res.json(user);
-                })
-                .catch(err => {
-                    if (err.name === 'SequelizeUniqueConstraintError') {
-                        return res.status(409).end();
-                    }
-                    res.status(500).end();
-                })
-        })
+    const user = await models.User.findOne({where:{id}})
+    if (!user) return res.status(404).end();
+    
+    try{
+        user.name = name;
+        user.age = age;
+        await user.save()
+        res.json(user);
+    }catch(err){
+        if (err.name === 'SequelizeUniqueConstraintError') {
+            return res.status(409).end();
+        }
+        res.status(500).end();
+    }
 };
 
-const destroy = function(req, res) {
+
+const destroy = async function(req, res) {
     const id = parseInt(req.params.id, 10)
     if (Number.isNaN(id)) return res.status(400).end();
-    models.User.destroy({
-        where: {id}
-    }).then(()=> {
+        await models.User.destroy({
+            where: {id}
+        })
         res.status(204).end();
-    })
 };
+
 
 module.exports = {
     index, create, show, update, destroy

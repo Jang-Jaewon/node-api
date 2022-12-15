@@ -1,12 +1,4 @@
 // api
-// const responseData = {
-//     users:[
-        // {id: 1, name: 'Park', age: 13},
-        // {id: 2, name: 'Kim', age: 21},
-        // {id: 3, name: 'Jang', age: 19},
-        // {id: 4, name: 'Lee', age: 15},
-//     ]
-// };
 const models = require('../../models');
 
 
